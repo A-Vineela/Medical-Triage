@@ -1,0 +1,26 @@
+[project]
+name = "medical-triage-openenv"
+version = "0.1.0"
+description = "Medical Triage OpenEnv Hackathon Submission"
+authors = [
+    { name = "Vineela Akella" },
+    { name = "Gurveen" },
+    { name = "Gayatri" }
+]
+requires-python = ">=3.10"
+
+dependencies = [
+    "openai",
+    "pydantic",
+    "pyyaml",
+    "fastapi",
+    "uvicorn",
+    "openenv-core>=0.2.0"
+]
+
+[project.scripts]
+run-env = "inference:main"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"

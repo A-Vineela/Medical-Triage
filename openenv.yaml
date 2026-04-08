@@ -1,0 +1,70 @@
+name: medical-triage
+version: "1.0.0"
+description: >
+  A real-world medical emergency department triage simulation.
+  The agent acts as a triage clinician, assessing patients,
+  ordering investigations, and assigning triage priority levels.
+author: OpenEnv Hackathon Submission
+tags:
+  - openenv
+  - medical
+  - triage
+  - healthcare
+  - real-world
+
+environment:
+  class: MedicalTriageEnv
+  module: environment
+
+tasks:
+  - name: easy_triage
+    description: "3 patients with clear-cut presentations (sprain, MI, otitis media)"
+    difficulty: easy
+    max_steps: 10
+    reward_range: [-1.0, 1.0]
+
+  - name: medium_triage
+    description: "3 patients with serious multi-system emergencies (SAH, PE, ectopic)"
+    difficulty: medium
+    max_steps: 10
+    reward_range: [-1.0, 1.0]
+
+  - name: hard_triage
+    description: "3 critically ill patients with complex presentations (septic shock, meningitis, aortic dissection)"
+    difficulty: hard
+    max_steps: 10
+    reward_range: [-1.0, 1.0]
+
+observation_space:
+  type: object
+  fields:
+    patient_id: string
+    age: integer
+    sex: string
+    chief_complaint: string
+    vitals: object
+    history: array
+    symptoms: array
+    available_actions: array
+    revealed_labs: object_or_null
+    revealed_imaging: object_or_null
+    agent_notes: array
+    step_count: integer
+    budget_remaining: integer
+
+action_space:
+  type: object
+  fields:
+    action_type:
+      type: string
+      enum: [order_labs, order_imaging, add_note, consult, assign_triage]
+    payload:
+      type: object_or_null
+
+reward:
+  type: float
+  range: [-1.0, 1.0]
+  description: >
+    Incremental rewards for information gathering (+0.05–0.1),
+    clinical notes (+0.05 for relevant content),
+    and triage assignment (+1.0 correct, +0.4 one level off, -0.5 dangerous under-triage).
