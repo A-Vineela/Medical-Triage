@@ -24,3 +24,6 @@ run-env = "inference:main"
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+[project.scripts]
+server = "server.app:app"
+run-env = "inference:main"
