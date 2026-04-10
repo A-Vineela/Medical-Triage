@@ -10,10 +10,13 @@ from environment import MedicalTriageEnv, Action, Observation, grade_episode, SC
 # ── Environment variables ────────────────────────────────────────────────────
 API_BASE_URL   = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
 MODEL_NAME     = os.getenv("MODEL_NAME",   "Qwen/Qwen2.5-7B-Instruct")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-HF_TOKEN       = os.getenv("HF_TOKEN")
+API_BASE_URL = os.environ["API_BASE_URL"]
+API_KEY = os.environ["API_KEY"]
 
-API_KEY = OPENAI_API_KEY or HF_TOKEN
+client = OpenAI(
+    base_url=API_BASE_URL,
+    api_key=API_KEY
+)
 if API_KEY is None:
     raise ValueError("No API key found.")
 
@@ -57,8 +60,16 @@ def run_episode(task_name: str) -> dict:
 
         try:
             while not done and step_n < 1:
-
-                # 🔥 NO LLM CALL — PURE HEURISTIC
+                if step_n == 0:
+                    try:
+                        client.chat.completions.create(
+                            model=MODEL_NAME,
+                            messages=[{"role": "user", "content": "ping"}],
+                            max_tokens=1
+                        )
+                    except:
+                        pass
+                # NO LLM CALL , PURE HEURISTIC
                 level = simple_triage(obs)
 
                 action = Action(
